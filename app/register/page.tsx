@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
@@ -81,6 +81,8 @@ function PasswordStrength({ password }: { password: string }) {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -134,7 +136,11 @@ export default function RegisterPage() {
       }
       const session = await getSession();
       const role = (session?.user as { role?: string })?.role;
-      router.push(role === "ADMIN" ? "/admin" : "/dashboard");
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        router.push(role === "ADMIN" ? "/admin" : "/dashboard");
+      }
     } catch {
       setErrors({ form: "Something went wrong. Please try again." });
     } finally {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, ArrowRight, AlertCircle, Zap } from "lucide-react";
 import { AuthShell } from "@/components/auth/AuthShell";
@@ -26,6 +26,8 @@ const DEMO_ACCOUNTS = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
@@ -55,7 +57,12 @@ export default function LoginPage() {
     // Fetch updated session to determine role-based redirect
     const session = await getSession();
     const role = (session?.user as { role?: string })?.role;
-    router.push(role === "ADMIN" ? "/admin" : "/dashboard");
+
+    if (callbackUrl) {
+      router.push(callbackUrl);
+    } else {
+      router.push(role === "ADMIN" ? "/admin" : "/dashboard");
+    }
   };
 
   const fillDemo = (acc: (typeof DEMO_ACCOUNTS)[0]) => {
