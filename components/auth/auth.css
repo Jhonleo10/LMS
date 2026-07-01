@@ -1,0 +1,675 @@
+/* ============================================================
+   AUTH PAGES — Matches AIT Landing Page Colour Theme
+   ink / paper / coral / teal / gold
+   ============================================================ */
+
+/* ---------- Page Layout ---------- */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  background: #0e1b2c;
+  overflow: hidden;
+  position: relative;
+  font-family: var(--font-inter), "Inter", sans-serif;
+}
+
+/* ============================================================
+   VISUAL SIDE (LEFT) — matches landing .hero
+   ============================================================ */
+.auth-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 56px 52px;
+  overflow: hidden;
+  background: #0e1b2c;
+}
+
+/* Landing hero gradient */
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 80% 20%, rgba(255, 107, 71, 0.18), transparent 60%),
+    radial-gradient(50% 50% at 10% 80%, rgba(31, 168, 155, 0.16), transparent 60%),
+    radial-gradient(40% 40% at 50% 50%, rgba(217, 164, 65, 0.06), transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animated gradient border on right edge */
+.auth-visual::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 107, 71, 0.55) 35%,
+      rgba(31, 168, 155, 0.35) 70%,
+      transparent 100%);
+  animation: auth-border-glow 4s ease-in-out infinite alternate;
+  z-index: 10;
+}
+
+@keyframes auth-border-glow {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- Orbs ---------- */
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: auth-float 9s ease-in-out infinite;
+  z-index: 0;
+}
+
+.auth-orb.o1 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(255, 107, 71, 0.18), transparent 70%);
+  filter: blur(55px);
+  top: -10%;
+  left: -8%;
+}
+
+.auth-orb.o2 {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(31, 168, 155, 0.16), transparent 70%);
+  filter: blur(45px);
+  bottom: 5%;
+  right: 5%;
+  animation-delay: -3.5s;
+  animation-duration: 11s;
+}
+
+.auth-orb.o3 {
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(217, 164, 65, 0.14), transparent 70%);
+  filter: blur(35px);
+  top: 45%;
+  left: 42%;
+  animation-delay: -6s;
+  animation-duration: 13s;
+}
+
+@keyframes auth-float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(18px, -28px) scale(1.07);
+  }
+
+  66% {
+    transform: translate(-14px, 18px) scale(0.94);
+  }
+}
+
+/* ---------- Particles ---------- */
+.auth-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.auth-particles span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 107, 71, 0.5);
+  border-radius: 50%;
+  animation: auth-particle-rise linear infinite;
+}
+
+@keyframes auth-particle-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translateY(-110vh) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ---------- Floating Scripts (matches landing .script-field) ---------- */
+.auth-scripts {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.auth-scripts span {
+  position: absolute;
+  font-family: var(--font-fraunces), "Fraunces", serif;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.05);
+  animation: auth-drift 22s ease-in-out infinite;
+  user-select: none;
+}
+
+@keyframes auth-drift {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.04;
+  }
+
+  50% {
+    transform: translateY(-22px) rotate(3deg);
+    opacity: 0.10;
+  }
+}
+
+/* ---------- Visual Content ---------- */
+.auth-visual-content {
+  position: relative;
+  z-index: 5;
+  max-width: 460px;
+}
+
+/* Live badge — coral like landing's orbit chips */
+.auth-visual-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  background: rgba(255, 107, 71, 0.12);
+  border: 1px solid rgba(255, 107, 71, 0.3);
+  border-radius: 999px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(10px);
+}
+
+.auth-visual-badge-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff6b47;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 107, 71, 0.8);
+  animation: auth-pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes auth-pulse-dot {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(255, 107, 71, 0.8);
+  }
+
+  50% {
+    box-shadow: 0 0 14px rgba(255, 107, 71, 1), 0 0 22px rgba(255, 107, 71, 0.5);
+  }
+}
+
+.auth-visual-badge span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffb89d;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Heading matches landing .hero h1 */
+.auth-visual-content h2 {
+  font-family: var(--font-fraunces), "Fraunces", serif;
+  font-size: clamp(2rem, 3.8vw, 2.9rem);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.12;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+/* em uses coral, matches .hero h1 em */
+.auth-visual-content h2 em {
+  font-style: italic;
+  color: #ff6b47;
+  font-weight: 500;
+}
+
+.auth-visual-content p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgba(250, 246, 238, 0.72);
+  margin-bottom: 36px;
+}
+
+/* ---------- Stats ---------- */
+.auth-stats {
+  display: flex;
+  gap: 0;
+  margin-bottom: 40px;
+  background: rgba(14, 27, 44, 0.5);
+  border: 1px solid rgba(250, 246, 238, 0.14);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.auth-stat {
+  flex: 1;
+  padding: 18px 20px;
+  text-align: center;
+  border-right: 1px solid rgba(250, 246, 238, 0.08);
+  transition: background 0.3s ease;
+}
+
+.auth-stat:last-child {
+  border-right: none;
+}
+
+.auth-stat:hover {
+  background: rgba(255, 107, 71, 0.07);
+}
+
+.auth-stat .n {
+  font-family: var(--font-fraunces), "Fraunces", serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #ff6b47;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.auth-stat .l {
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(250, 246, 238, 0.5);
+  font-weight: 500;
+}
+
+/* ---------- Orbit Widget ---------- */
+.auth-mini-orbit {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+
+.auth-mini-orbit .center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-fraunces), "Fraunces", serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #ff6b47;
+  z-index: 2;
+}
+
+.auth-mini-orbit .ring {
+  position: absolute;
+  inset: 0;
+  border: 1px dashed rgba(255, 107, 71, 0.3);
+  border-radius: 50%;
+  animation: auth-orbit-spin 18s linear infinite;
+}
+
+.auth-mini-orbit .dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  background: #ff6b47;
+  border-radius: 50%;
+  transform: rotate(var(--a)) translateY(-44px);
+  box-shadow: 0 0 10px rgba(255, 107, 71, 0.8), 0 0 20px rgba(255, 107, 71, 0.4);
+}
+
+@keyframes auth-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
+   FORM SIDE (RIGHT) — warm paper/cream bg
+   ============================================================ */
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  background: #faf6ee;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle warm tint */
+.auth-form-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 85% 10%, rgba(255, 107, 71, 0.06), transparent),
+    radial-gradient(ellipse 40% 35% at 15% 90%, rgba(31, 168, 155, 0.05), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- Back link ---------- */
+.auth-home-link {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.25s ease, gap 0.25s ease;
+  z-index: 10;
+  text-decoration: none;
+}
+
+.auth-home-link:hover {
+  color: #e04e2d;
+  gap: 10px;
+}
+
+/* ---------- Form wrapper ---------- */
+.auth-form-wrap {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 430px;
+}
+
+/* ---------- Form header ---------- */
+.auth-form-header {
+  margin-bottom: 28px;
+}
+
+.auth-form-header .brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.auth-form-header h1 {
+  font-family: var(--font-fraunces), "Fraunces", serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: #0e1b2c;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.auth-form-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* ---------- Glass Card — warm white ---------- */
+.auth-glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(14, 27, 44, 0.1);
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow:
+    0 20px 50px -20px rgba(14, 27, 44, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Coral shimmer line on top */
+.auth-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 55%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 71, 0.55), transparent);
+  animation: auth-shimmer 5s ease-in-out infinite 1.5s;
+}
+
+@keyframes auth-shimmer {
+  0% {
+    left: -55%;
+  }
+
+  100% {
+    left: 160%;
+  }
+}
+
+/* ---------- Fields ---------- */
+.auth-field {
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.auth-field-icon {
+  position: absolute;
+  left: 14px;
+  bottom: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: color 0.25s ease;
+  z-index: 2;
+}
+
+.auth-field:focus-within .auth-field-icon {
+  color: #ff6b47;
+}
+
+/* ---------- Submit Button — coral (matches .btn-primary) ---------- */
+.auth-submit-btn {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #ff6b47 !important;
+  border: 1px solid #ff6b47 !important;
+  color: #fff !important;
+  font-weight: 600;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease !important;
+}
+
+.auth-submit-btn:hover {
+  background: #e04e2d !important;
+  border-color: #e04e2d !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 30px -10px rgba(255, 107, 71, 0.55) !important;
+}
+
+.auth-submit-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* Shine sweep */
+.auth-submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+}
+
+.auth-submit-btn:hover::after {
+  transform: translateX(100%);
+}
+
+/* ---------- Footer link ---------- */
+.auth-footer-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 20px;
+}
+
+.auth-footer-link a {
+  color: #e04e2d;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.auth-footer-link a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #ff6b47;
+  transition: width 0.25s ease;
+}
+
+.auth-footer-link a:hover {
+  color: #ff6b47;
+}
+
+.auth-footer-link a:hover::after {
+  width: 100%;
+}
+
+/* ---------- Demo hint ---------- */
+.auth-demo-hint {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 107, 71, 0.05);
+  border: 1px solid rgba(255, 107, 71, 0.18);
+  font-size: 0.78rem;
+  color: #6b7280;
+  line-height: 1.8;
+}
+
+.auth-demo-hint strong {
+  color: #1b2c42;
+}
+
+.auth-demo-hint-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #e04e2d;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* ---------- Error banner ---------- */
+.auth-error-banner {
+  border-radius: 12px;
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Input — light warm theme ---------- */
+.auth-glass-card .ait-input {
+  background: #fff;
+  border: 1px solid rgba(14, 27, 44, 0.14);
+  color: #0e1b2c;
+  border-radius: 12px;
+  padding: 11px 14px 11px 42px !important;
+  font-size: 0.9rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.auth-glass-card .ait-input::placeholder {
+  color: #9ca3af;
+}
+
+.auth-glass-card .ait-input:focus {
+  outline: none;
+  border-color: #ff6b47;
+  box-shadow: 0 0 0 3px rgba(255, 107, 71, 0.14), 0 4px 16px -4px rgba(255, 107, 71, 0.15);
+}
+
+.auth-glass-card .ait-label {
+  color: #4a5568;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.auth-glass-card .ait-error {
+  color: #dc2626;
+  font-size: 0.73rem;
+}
+
+.auth-glass-card .ait-input-error {
+  border-color: #dc2626;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 960px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-visual {
+    display: none;
+  }
+
+  .auth-form-side {
+    min-height: 100vh;
+    padding: 24px 20px;
+    background: #faf6ee;
+  }
+
+  .auth-glass-card {
+    padding: 24px 22px;
+  }
+}
