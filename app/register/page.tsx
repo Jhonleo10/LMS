@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
@@ -79,7 +79,7 @@ function PasswordStrength({ password }: { password: string }) {
   );
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -378,5 +378,13 @@ export default function RegisterPage() {
         )}
       </AnimatePresence>
     </AuthShell>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-screen items-center justify-center">Loading...</div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -24,7 +24,7 @@ const DEMO_ACCOUNTS = [
   { label: "Student", email: "learner@example.com", password: "learner123", color: "#1fa89b" },
 ];
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
@@ -208,5 +208,13 @@ export default function LoginPage() {
         </motion.div>
       </form>
     </AuthShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-screen items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
