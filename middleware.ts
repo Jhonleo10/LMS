@@ -1,11 +1,16 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { ensureAuthEnv } from "@/lib/set-auth-env";
+import { ensureAuthEnv, ensureAuthEnvFromRequest } from "@/lib/set-auth-env";
 
 ensureAuthEnv();
 
 export default withAuth(
   function middleware(req) {
+    ensureAuthEnvFromRequest(
+      req.headers.get("host"),
+      req.headers.get("x-forwarded-proto")
+    );
+
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 

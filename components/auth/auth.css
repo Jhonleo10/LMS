@@ -664,12 +664,38 @@
   }
 
   .auth-form-side {
+    min-height: 100dvh;
     min-height: 100vh;
-    padding: 24px 20px;
+    padding: max(16px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
     background: #faf6ee;
   }
 
+  .auth-home-link {
+    top: max(16px, env(safe-area-inset-top));
+    left: 16px;
+  }
+
+  .auth-form-header h1 {
+    font-size: 1.55rem;
+  }
+
   .auth-glass-card {
-    padding: 24px 22px;
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form-side {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .auth-form-wrap {
+    max-width: 100%;
+  }
+
+  .auth-glass-card .ait-input {
+    font-size: 16px; /* prevents iOS zoom on focus */
   }
 }

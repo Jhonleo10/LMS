@@ -1,4 +1,4 @@
-/* AIT Landing — scoped styles matching reference artifact */
+﻿/* AIT Landing — scoped styles matching reference artifact */
 
 .ait-landing {
   --ink: #0e1b2c;
@@ -1275,6 +1275,23 @@
 
   .ait-landing .hero h1 {
     font-size: 2.2rem;
+  }
+
+  .ait-landing .hero-ctas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ait-landing .hero-ctas .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ait-landing .whatsapp-fab {
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 52px;
+    height: 52px;
   }
 }
 

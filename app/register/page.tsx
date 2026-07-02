@@ -134,6 +134,7 @@ function RegisterContent() {
         window.location.assign("/login");
         return;
       }
+      await fetch("/api/auth/session", { credentials: "include", cache: "no-store" });
       navigateAfterSignIn(callbackUrl);
     } catch {
       setErrors({ form: "Something went wrong. Please try again." });

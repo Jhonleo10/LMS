@@ -54,6 +54,8 @@ function LoginContent() {
       return;
     }
 
+    // Confirm session cookie is set before hard navigation (Vercel race fix).
+    await fetch("/api/auth/session", { credentials: "include", cache: "no-store" });
     navigateAfterSignIn(callbackUrl);
   };
 

@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { ensureAuthEnv } from "@/lib/set-auth-env";
+import { ensureAuthEnvFromRequest } from "@/lib/set-auth-env";
 import { resolveServerSession } from "@/lib/auth-server";
 import { getRoleBasedDestination } from "@/lib/auth-utils";
 import { isAuthDebug } from "@/lib/env";
-
-ensureAuthEnv();
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +12,12 @@ export default async function AuthCallbackPage({
 }: {
   searchParams: { callbackUrl?: string };
 }) {
+  const headerStore = headers();
+  ensureAuthEnvFromRequest(
+    headerStore.get("host"),
+    headerStore.get("x-forwarded-proto")
+  );
+
   const session = await resolveServerSession();
 
   if (!session?.user) {
@@ -27,9 +31,9 @@ export default async function AuthCallbackPage({
     redirect(`/login${params.toString() ? `?${params.toString()}` : ""}`);
   }
 
-  const host = headers().get("host") ?? "";
-  const protocol = headers().get("x-forwarded-proto") ?? "https";
-  const origin = `${protocol}://${host}`;
+  const host = headerStore.get("host") ?? "";
+  const protocol = headerStore.get("x-forwarded-proto") ?? "https";
+  const origin = `${protocol.split(",")[0].trim()}://${host}`;
 
   const role = session.user.role;
   const destination = getRoleBasedDestination(
