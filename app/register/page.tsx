@@ -2,8 +2,9 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
+import { completeAuthRedirect } from "@/lib/auth-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { AuthShell } from "@/components/auth/AuthShell";
@@ -80,7 +81,6 @@ function PasswordStrength({ password }: { password: string }) {
 }
 
 function RegisterContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const [form, setForm] = useState({
@@ -131,16 +131,10 @@ function RegisterContent() {
       });
 
       if (login?.error) {
-        router.push("/login");
+        window.location.assign("/login");
         return;
       }
-      const session = await getSession();
-      const role = (session?.user as { role?: string })?.role;
-      if (callbackUrl) {
-        router.push(callbackUrl);
-      } else {
-        router.push(role === "ADMIN" ? "/admin" : "/dashboard");
-      }
+      await completeAuthRedirect(getSession, callbackUrl);
     } catch {
       setErrors({ form: "Something went wrong. Please try again." });
     } finally {

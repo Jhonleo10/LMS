@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Users, UserCheck, UserX, Search, Plus } from "lucide-react";
+import { Users, UserCheck, UserX, Search, Plus, Eye, EyeOff } from "lucide-react";
 import { PageTransition } from "@/components/PageTransition";
 import { CountUp } from "@/components/ui/CountUp";
 import { Toggle } from "@/components/ui/Toggle";
@@ -29,6 +29,7 @@ export default function AdminDashboard() {
     autoGenerate: false,
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -295,7 +296,7 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      <Dialog open={modalOpen} onClose={() => setModalOpen(false)} title="Add User">
+      <Dialog open={modalOpen} onClose={() => { setModalOpen(false); setShowPassword(false); }} title="Add User">
         <form onSubmit={handleCreate} className="space-y-4">
           <Input
             label="Name"
@@ -313,14 +314,26 @@ export default function AdminDashboard() {
             placeholder="john@example.com"
           />
           {!form.autoGenerate && (
-            <Input
-              label="Password"
-              type="password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              error={formErrors.password}
-              placeholder="Min. 6 characters"
-            />
+            <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                error={formErrors.password}
+                placeholder="Min. 6 characters"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-3 top-[38px] text-[var(--muted)] hover:text-[var(--ink)] transition-colors"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           )}
           <label className="flex items-center gap-2 text-sm text-muted cursor-pointer">
             <input
