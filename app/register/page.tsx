@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { signIn, getSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { completeAuthRedirect } from "@/lib/auth-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
@@ -134,7 +134,7 @@ function RegisterContent() {
         window.location.assign("/login");
         return;
       }
-      await completeAuthRedirect(getSession, callbackUrl);
+      await completeAuthRedirect(callbackUrl);
     } catch {
       setErrors({ form: "Something went wrong. Please try again." });
     } finally {

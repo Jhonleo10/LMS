@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
-import { signIn, getSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { completeAuthRedirect } from "@/lib/auth-redirect";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,14 +47,14 @@ function LoginContent() {
     setErrors({});
     setLoading(true);
     const result = await signIn("credentials", { email, password, redirect: false });
-    setLoading(false);
 
     if (result?.error) {
+      setLoading(false);
       setErrors({ form: "Invalid email or password. Please try again." });
       return;
     }
 
-    await completeAuthRedirect(getSession, callbackUrl);
+    await completeAuthRedirect(callbackUrl);
   };
 
   const fillDemo = (acc: (typeof DEMO_ACCOUNTS)[0]) => {

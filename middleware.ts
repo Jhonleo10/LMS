@@ -24,7 +24,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname;
-        const publicPaths = ["/", "/login", "/register", "/access-suspended"];
+        const publicPaths = ["/", "/login", "/register", "/access-suspended", "/auth/callback"];
         if (publicPaths.includes(path)) return true;
         return !!token;
       },
@@ -39,6 +39,7 @@ export const config = {
     "/dashboard/:path*",
     "/videos/:path*",
     "/access-suspended",
+    "/auth/callback",
     "/login",
     "/register",
   ],

@@ -1,42 +1,50 @@
-/**
- * Safe post-login redirect helpers.
- * Uses hard navigation so the session cookie is visible to edge middleware on Vercel.
- */
-
-export function getSafeCallbackUrl(callbackUrl: string | null): string | null {
-  if (!callbackUrl) return null;
-  if (callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")) {
-    return callbackUrl;
-  }
-  return null;
-}
-
-export function getRoleBasedDestination(
-  role?: string,
-  callbackUrl?: string | null
-): string {
-  const safe = callbackUrl ? getSafeCallbackUrl(callbackUrl) : null;
-  if (safe) return safe;
-  return role === "ADMIN" ? "/admin" : "/dashboard";
-}
+import { getRoleBasedDestination } from "@/lib/auth-utils";
 
 type SessionLike = { user?: { role?: string } } | null;
 
+/**
+ * After credentials sign-in, navigate via the server callback route so
+ * middleware sees the session cookie on Vercel (avoids client race).
+ */
 export async function completeAuthRedirect(
+  callbackUrl: string | null
+): Promise<void> {
+  const params = new URLSearchParams();
+  if (callbackUrl) {
+    params.set("callbackUrl", callbackUrl);
+  }
+  const query = params.toString();
+  window.location.assign(query ? `/auth/callback?${query}` : "/auth/callback");
+}
+
+/** @deprecated Use completeAuthRedirect(callbackUrl) after signIn */
+export async function completeAuthRedirectLegacy(
   getSession: () => Promise<SessionLike>,
   callbackUrl: string | null
 ): Promise<void> {
   let session: SessionLike = null;
+  const origin = window.location.origin;
 
-  for (let attempt = 0; attempt < 4; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     if (attempt > 0) {
-      await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
+      await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
     }
-    session = await getSession();
+    try {
+      const res = await fetch("/api/auth/session", { cache: "no-store" });
+      if (res.ok) {
+        session = await res.json();
+      }
+    } catch {
+      session = await getSession();
+    }
     if (session?.user) break;
   }
 
-  const role = session?.user?.role;
-  const destination = getRoleBasedDestination(role, callbackUrl);
+  if (!session?.user) {
+    throw new Error("Session not established");
+  }
+
+  const role = session.user.role;
+  const destination = getRoleBasedDestination(role, callbackUrl, origin);
   window.location.assign(destination);
 }
