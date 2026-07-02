@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { completeAuthRedirect } from "@/lib/auth-redirect";
+import { navigateAfterSignIn } from "@/lib/auth-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { AuthShell } from "@/components/auth/AuthShell";
@@ -130,11 +130,11 @@ function RegisterContent() {
         redirect: false,
       });
 
-      if (login?.error) {
+      if (!login?.ok || login?.error) {
         window.location.assign("/login");
         return;
       }
-      await completeAuthRedirect(callbackUrl);
+      navigateAfterSignIn(callbackUrl);
     } catch {
       setErrors({ form: "Something went wrong. Please try again." });
     } finally {

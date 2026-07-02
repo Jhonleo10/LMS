@@ -1,8 +1,11 @@
-import { getServerSession } from "next-auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+import { ensureAuthEnv } from "@/lib/set-auth-env";
+import { resolveServerSession } from "@/lib/auth-server";
 import { getRoleBasedDestination } from "@/lib/auth-utils";
+import { isAuthDebug } from "@/lib/env";
+
+ensureAuthEnv();
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +14,12 @@ export default async function AuthCallbackPage({
 }: {
   searchParams: { callbackUrl?: string };
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await resolveServerSession();
 
   if (!session?.user) {
+    if (isAuthDebug()) {
+      console.warn("[auth] callback: no session — back to login");
+    }
     const params = new URLSearchParams();
     if (searchParams.callbackUrl) {
       params.set("callbackUrl", searchParams.callbackUrl);
@@ -25,12 +31,16 @@ export default async function AuthCallbackPage({
   const protocol = headers().get("x-forwarded-proto") ?? "https";
   const origin = `${protocol}://${host}`;
 
-  const role = (session.user as { role?: string }).role;
+  const role = session.user.role;
   const destination = getRoleBasedDestination(
     role,
     searchParams.callbackUrl ?? null,
     origin
   );
+
+  if (isAuthDebug()) {
+    console.info("[auth] callback: redirecting to", destination, "role:", role);
+  }
 
   redirect(destination);
 }

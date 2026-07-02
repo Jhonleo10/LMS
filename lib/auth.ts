@@ -2,7 +2,13 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { isAuthDebug } from "@/lib/env";
+import { ensureAuthEnv } from "@/lib/set-auth-env";
 import type { Role, Status } from "@/types";
+
+ensureAuthEnv();
+
+const isProduction = process.env.NODE_ENV === "production";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,28 +20,41 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          if (isAuthDebug()) console.warn("[auth] authorize: missing credentials");
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email.trim().toLowerCase() },
+          });
 
-        if (!user) return null;
+          if (!user) {
+            if (isAuthDebug()) console.warn("[auth] authorize: user not found");
+            return null;
+          }
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-        if (!isValid) return null;
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) {
+            if (isAuthDebug()) console.warn("[auth] authorize: invalid password");
+            return null;
+          }
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role as Role,
-          status: user.status as Status,
-        };
+          if (isAuthDebug()) {
+            console.info("[auth] authorize: success", user.email, user.role);
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role as Role,
+            status: user.status as Status,
+          };
+        } catch (error) {
+          console.error("[auth] authorize: database error", error);
+          return null;
+        }
       },
     }),
   ],
@@ -64,6 +83,7 @@ export const authOptions: NextAuthOptions = {
         token.status = user.status;
         token.name = user.name;
         token.email = user.email;
+        if (isAuthDebug()) console.info("[auth] jwt: user attached", user.email);
       }
 
       if (trigger === "update" && token.id) {
@@ -90,6 +110,20 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  useSecureCookies: process.env.NODE_ENV === "production",
+  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  useSecureCookies: isProduction,
+  cookies: {
+    sessionToken: {
+      name: isProduction
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: isProduction,
+      },
+    },
+  },
+  debug: isAuthDebug(),
 };

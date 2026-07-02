@@ -1,10 +1,21 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { ensureAuthEnv } from "@/lib/set-auth-env";
+
+ensureAuthEnv();
 
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
+
+    if (process.env.AUTH_DEBUG === "true") {
+      console.info("[auth] middleware", path, {
+        hasToken: !!token,
+        role: token?.role,
+        status: token?.status,
+      });
+    }
 
     if (token?.status === "DISABLED" && path !== "/access-suspended") {
       return NextResponse.redirect(new URL("/access-suspended", req.url));
@@ -15,16 +26,25 @@ export default withAuth(
     }
 
     if ((path === "/login" || path === "/register") && token) {
-      const redirect =
-        token.role === "ADMIN" ? "/admin" : "/dashboard";
-      return NextResponse.redirect(new URL(redirect, req.url));
+      const destination = token.role === "ADMIN" ? "/admin" : "/dashboard";
+      return NextResponse.redirect(new URL(destination, req.url));
     }
   },
   {
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+    pages: {
+      signIn: "/login",
+    },
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname;
-        const publicPaths = ["/", "/login", "/register", "/access-suspended", "/auth/callback"];
+        const publicPaths = [
+          "/",
+          "/login",
+          "/register",
+          "/access-suspended",
+          "/auth/callback",
+        ];
         if (publicPaths.includes(path)) return true;
         return !!token;
       },

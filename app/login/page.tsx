@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { completeAuthRedirect } from "@/lib/auth-redirect";
+import { navigateAfterSignIn } from "@/lib/auth-redirect";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, ArrowRight, AlertCircle, Zap } from "lucide-react";
 import { AuthShell } from "@/components/auth/AuthShell";
@@ -48,13 +48,13 @@ function LoginContent() {
     setLoading(true);
     const result = await signIn("credentials", { email, password, redirect: false });
 
-    if (result?.error) {
+    if (!result?.ok || result?.error) {
       setLoading(false);
       setErrors({ form: "Invalid email or password. Please try again." });
       return;
     }
 
-    await completeAuthRedirect(callbackUrl);
+    navigateAfterSignIn(callbackUrl);
   };
 
   const fillDemo = (acc: (typeof DEMO_ACCOUNTS)[0]) => {
